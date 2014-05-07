@@ -1,10 +1,11 @@
 #lang racket
 
 (provide atom?)
+(provide lat?)
 
 (define atom? (lambda (a)  (not (list? a))))
 
-(define lat? 
+(define lat?
   (lambda (l)
     (cond 
       ((null? l) #t)
