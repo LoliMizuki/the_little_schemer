@@ -2,6 +2,8 @@
 
 (provide atom?)
 (provide lat?)
+(provide member?)
+(provide multirember)
 
 (define atom? (lambda (a)  (not (list? a))))
 
@@ -50,6 +52,13 @@
       ((null? lat) (quote ()))
       ((eq? a (car lat)) (rember-all-of a (cdr lat)))
       (else (cons (car lat) (rember-all-of a (cdr lat)))))))
+
+(define multirember
+  (lambda (a lat) 
+    (cond 
+      ((null? lat) (quote ()))
+      ((eq? a (car lat)) (multirember a (cdr lat)))
+      (else (cons (car lat) (multirember a (cdr lat)))))))
 
 (define firsts 
   (lambda (l) 

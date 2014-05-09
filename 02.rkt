@@ -8,8 +8,8 @@
 (provide tup+)
 (provide greater?)
 (provide less? )
-(provide equal?)
-(provide equal2?)
+;(provide equal?)
+;(provide equal2?)
 (provide pow)
 
 ; as +
