@@ -4,6 +4,7 @@
 (provide lat?)
 (provide member?)
 (provide multirember)
+(provide firsts)
 
 (define atom? (lambda (a)  (not (list? a))))
 
