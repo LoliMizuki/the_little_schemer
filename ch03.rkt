@@ -1,41 +1,9 @@
 #lang racket
 
-(provide atom?)
-(provide lat?)
-(provide member?)
+; ch03. Cons the Magnificent
+
 (provide multirember)
 (provide firsts)
-
-(define atom? (lambda (a)  (not (list? a))))
-
-(define lat?
-  (lambda (l)
-    (cond 
-      ((null? l) #t)
-      ((atom? (car l)) (lat? (cdr l)))
-      (else #f))))
-
-
-(define miz-lat? 
-  (lambda (l)
-    (cond 
-      ((null? l) #t)
-      ((not (atom? (car l))) #f)
-      (else (lat? (cdr l))))))
-
-(define member? 
-  (lambda (a lat)
-    (cond 
-      ((null? lat) #f)
-      (else (or (eq? a (car lat))
-                (member? a (cdr lat)))))))
-
-(define miz-member? 
-  (lambda (a lat)
-    (cond 
-      ((null? lat) #f)
-      ((eq? a (car lat)) #t)
-      (else (member? a (cdr lat))))))
 
 (define rember
   (lambda (a lat) 

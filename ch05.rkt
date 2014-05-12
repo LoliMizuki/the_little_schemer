@@ -1,8 +1,13 @@
 #lang racket
 
+; ch05. *Oh My Gawd*; It's Full of Stars
+
+(provide equal?)
+
 (require "01.rkt")
 (require "02.rkt")
 (require "03.rkt")
+
 
 (define miz-rember*
   (lambda (a l)

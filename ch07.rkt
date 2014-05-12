@@ -1,5 +1,7 @@
 #lang racket
 
+; ch07. Friends and Relations
+
 (require "01.rkt")
 
 ; is lat a set?
@@ -156,12 +158,26 @@
 ;(seconds (list (list 'a 'b) (list 'c 'd) (list 3 4)))
 
 ; fullfun: a list of pairs, 每個第二個元素的集合是一個 set
+; also call one-to-one
 (define fullfun?
   (lambda (fun)
     (set? (seconds fun))))
 
-(fullfun? 
- (list (list 'grape 'raisin) (list 'plum 'prune) (list 'stewed 'grape)))
+; test
+;(fullfun? 
+; (list (list 'grape 'raisin) (list 'plum 'prune) (list 'stewed 'grape)))
+;
+;(fullfun? 
+; (list (list 'grape 'raisin) (list 'plum 'grape) (list 'stewed 'grape)))
 
-(fullfun? 
- (list (list 'grape 'raisin) (list 'plum 'grape) (list 'stewed 'grape)))
+; another to define one-to-one(fullfuc?)
+
+(define one-to-one?
+  (lambda (fun)
+    (fun? (revrel fun))))
+
+;(one-to-one? 
+; (list (list 'grape 'raisin) (list 'plum 'prune) (list 'stewed 'grape)))
+;
+;(one-to-one?
+; (list (list 'grape 'raisin) (list 'plum 'grape) (list 'stewed 'grape)))
