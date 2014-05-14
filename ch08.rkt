@@ -136,12 +136,32 @@
     (cond
       ((null? lat) (col (quote ()) (quote()))) ; 執行 col 的終止條件
       ((eq? (car lat) a) (multirember&col a (cdr lat) (lambda (newlat seem) ; 當不為終止時, 使用一個 functions 來記憶暫時的值s
-                                                        (col newlat (cons (car lat) seem))))) ; ???
+                                                        (col newlat (cons (car lat) seem)))))
       (else (multirember&col a (cdr lat) (lambda (newlat seem)
                                            (col (cons (car lat) newlat) seem)))))))
 
 ; col 函數
 (define a-friend (lambda (x y) (null? y)))
 
-(multirember&col 'tuna (list 'strawberries 'tuna 'and 'swordfish) a-friend)
+; 追蹤測試: 若 a: tuna, lat: ('tuna), col: a-friend
+; -- 1st 輪 --
+; (eq? (car lat) a) is TRUE => 執行: (multirember&col a (cdr lat) new-friend
+; new-friend 的定義鐘包含了目前需要記錄的值
+; 即 (define new-friend (lambda (newlat seem)
+;                               (col newlat (cons 'tuna seem)))) # 其中 col 為 a-friend
+; 
+; -- 2nd 輪 --
+; (null? lat) is TRUE => (col '() '()) => (new-friend '():newlat '():seem) 
+; => (col '() (cons 'tuna '())) => (col '() '(tuna)) => (a-friend '() '(tuna)) => #f
+;
+; -- 結論 -- 
+; 把符合條件存在 seem, 不符合的存在 newlat (這樣解釋 ok 嗎???
+ 
+; test
+;(multirember&col 'tuna (list 'strawberries 'tuna 'and 'swordfish) a-friend)
+
+(define last-friend (lambda (x y) (length x)))
+
+; (multirember&col 'tuna (list 'strawberries 'tuna 'and 'swordfish) last-friend)
+
 
