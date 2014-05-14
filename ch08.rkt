@@ -2,7 +2,9 @@
 
 ; Ch.8 Lambda the Ultimate
 
-(require "ch05-1.rkt")
+(require "ch01.rkt")
+(require "ch04.rkt")
+(require "ch05.rkt")
 
 (define rember-f
   (lambda (test? a l)
@@ -57,3 +59,89 @@
         (else (cons (car l) ((insertR-f test?) new old (cdr l))))))))
 
 ;((insertR-f eq?) 'h 'a (list 'c 'b 'a 'g))
+
+(define insert-g
+  (lambda (seq)
+    (lambda (new old l)
+      (cond
+        ((null? l) (quote ()))
+        ((eq? old (car l)) (seq new old (cdr l)))
+        (else (cons old ((insert-g seq) new old (cdr l))))))))
+
+(define insertL (insert-g (lambda (new old l) (cons new (cons old l)))))
+(define insertR (insert-g (lambda (new old l) (cons old (cons new l)))))
+(define subst (insert-g (lambda (new old l) (cons new l))))
+
+(define atom-to-function
+  (lambda (x)
+    (cond
+      ((eq? x (quote +)) +)
+      ((eq? x (quote *)) *)
+      ((eq? x (quote ^)) expt))))
+
+(define 1st-sub-exp
+  (lambda (aexp)
+    (car aexp)))
+
+(define 2nd-sub-exp
+  (lambda (aexp)
+    (car (cdr (cdr aexp)))))
+
+(define operator
+  (lambda (aexp)
+    (car (cdr aexp))))
+
+(define value
+  (lambda (nexp)
+    (cond
+      ((atom? nexp) nexp)
+      (else ((atom-to-function (operator nexp)) 
+             (1st-sub-exp nexp) (2nd-sub-exp nexp))))))
+
+;(value '(1 + 2))
+;(value '(1 * 2))
+;(value '(3 ^ 2))
+
+(define multirember-f
+  (lambda (test?)
+    (lambda (a l)
+      (cond
+        ((null? l) (quote ()))
+        ((test? (car l) a) ((multirember-f test?) a (cdr l)))
+        (else (cons (car l) ((multirember-f test?) a (cdr l))))))))
+
+;((multirember-f <) 5 '(1 2 3 4 5 6 7 8 9 10))
+;((multirember-f eq?) 'tuna (list 'shrimp 'salad 'tuna 'salad 'and 'tuna))
+
+(define multirember-eq? (multirember-f eq?))
+
+;(multirember-eq? 5 '(1 2 3 4 5 6 7 8 9 10))
+
+; 直接將條件函數作為參數
+
+(define multirember-T
+  (lambda (test? lat)
+    (cond
+      ((null? lat) (quote ()))
+      ((test? (car lat)) (multirember-T test? (cdr lat)))
+      (else (cons (car lat) (multirember-T test? (cdr lat)))))))
+
+;(multirember-T (lambda (a) (eq? '5 a)) '(1 2 5 4 5 6 7 8 5 10))
+
+; col means collector or continuation
+; 當 (eq? a lat) 成立時, 執行 col 
+
+(define multirember&col
+  (lambda (a lat col)
+    (cond
+      ((null? lat) (col (quote ()) (quote()))) ; 執行 col 的終止條件
+      ((eq? (car lat) a) (multirember&col a (cdr lat) (lambda (newlat seem) ; 當不為終止時, 使用一個 functions 來記憶暫時的值s
+                                                        (col newlat (cons (car lat) seem))))) ; ???
+      (else (multirember&col a (cdr lat) (lambda (newlat seem)
+                                           (col (cons (car lat) newlat) seem)))))))
+
+; col 函數
+(define a-friend (lambda (x y) (null? y)))
+
+(multirember&col 'tuna (list 'strawberries 'tuna 'and 'swordfish) a-friend)
+

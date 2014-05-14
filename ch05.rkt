@@ -4,10 +4,10 @@
 
 (provide equal?)
 
-(require "01.rkt")
-(require "02.rkt")
-(require "03.rkt")
-
+(require "ch01.rkt")
+(require "ch02.rkt")
+(require "ch03.rkt")
+(require "ch04.rkt")
 
 (define miz-rember*
   (lambda (a l)
