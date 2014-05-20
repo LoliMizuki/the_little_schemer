@@ -155,8 +155,9 @@
 ; => (col '() (cons 'tuna '())) => (col '() '(tuna)) => (a-friend '() '(tuna)) => #f
 ;
 ; -- 結論 -- 
+; 每次呼叫都會產生一個新的 col 定義, 記錄了上一次的結果.
 ; 把符合條件存在 seem, 不符合的存在 newlat (這樣解釋 ok 嗎???
- 
+
 ; test
 ;(multirember&col 'tuna (list 'strawberries 'tuna 'and 'swordfish) a-friend)
 
@@ -164,4 +165,82 @@
 
 ; (multirember&col 'tuna (list 'strawberries 'tuna 'and 'swordfish) last-friend)
 
+(define multiinsertLR
+  (lambda (new oldL oldR lat)
+    (cond
+      ((null? lat) (quote ()))
+      ((eq? oldL (car lat)) (cons new (cons oldL (multiinsertLR new oldL oldR (cdr lat)))))
+      ((eq? oldR (car lat)) (cons oldR (cons new (multiinsertLR new oldL oldR (cdr lat)))))
+      (else (cons (car lat) (multiinsertLR new oldR oldL (cdr lat)))))))
 
+; test
+;(multiinsertLR 'new '-> '<- (list 'g '<- '<- 'b 'd '-> 'c))
+
+; (col lat L:<num of do left insertons> R:<num of do right insertons>)
+(define multiinsertLR&co
+  (lambda (new oldL oldR lat col)
+    (cond
+      ((null? lat) (col (quote ()) 0 0))
+      ((eq? oldL (car lat)) (multiinsertLR&co 
+                             new 
+                             oldL 
+                             oldR 
+                             (cdr lat)
+                             (lambda (newlat L R)
+                               (col (cons new (cons oldL newlat)) (add1 L) R))))
+      ((eq? oldR (car lat)) (multiinsertLR&co 
+                             new 
+                             oldL 
+                             oldR 
+                             (cdr lat)
+                             (lambda (newlat L R)
+                               (col (cons oldR (cons new newlat)) L (add1 R)))))
+      (else (multiinsertLR&co 
+             new
+             oldL 
+             oldR
+             (cdr lat)
+             (lambda (newlat L R)
+               (col (cons (car lat) newlat) L R)))))))
+
+; test
+;(multiinsertLR&co  'new '-> '<- (list 'g '<- '<- 'b 'd '-> 'c) (lambda (l L R) R))
+;(multiinsertLR&co  'new '-> '<- (list 'g '<- '<- 'b 'd '-> 'c) (lambda (l L R) l))
+;(multiinsertLR&co 'salty 'fish 'chips (list 'chips 'and 'fish 'or 'fish 'and 'chips) (lambda (l L R) L))
+;(multiinsertLR&co 'salty 'fish 'chips (list 'chips 'and 'fish 'or 'fish 'and 'chips) (lambda (l L R) R))
+;(multiinsertLR&co 'salty 'fish 'chips (list 'chips 'and 'fish 'or 'fish 'and 'chips) (lambda (l L R) l))
+
+; (define even? (lambda (n) (= (* (/ n 2) 2) n))) not work :D ... 
+(define even? (lambda (n) (= (modulo n 2) 0)))
+
+(define even-only*
+  (lambda (l)
+    (cond
+      ((null? l) (quote ()))
+      ((number? (car l)) (cond
+                           ((even? (car l)) (cons (car l) (even-only* (cdr l))))
+                           (else (even-only* (cdr l)))))
+      (else (cons (even-only* (car l)) (even-only* (cdr l)))))))
+
+; test
+;(even-only* '((9 1 2 8) 3 10 ((9 9) 7 6) 2))
+
+; col: l: evens' list, p: product of evens, s sum of odds
+(define even-only*&co
+  (lambda (l col)
+    (cond 
+      ((null? l) (col (quote ()) 1 0))
+      ((number? (car l)) ; (atom? (car l))
+       (cond 
+         ((even? (car l)) (even-only*&co (cdr l)
+                                        (lambda (newl p s) 
+                                          (col (cons (car l) newl) (* (car l) p) s))))
+         (else (even-only*&co (cdr l)
+                              (lambda (newl p s) 
+                                (col newl p (+ (car l) s)))))))
+      (else (even-only*&co (car l)
+                           (lambda (newl p s)
+                             ())))))) ; not complete this part ... 
+                           
+;(even-only*&co '(1 2 3 4 5 6) (lambda (l p s) s))
+;(even-only*&co '(1 10 (4 5 6) 2 3 12) (lambda (l p s) l))

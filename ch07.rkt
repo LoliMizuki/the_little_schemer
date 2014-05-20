@@ -2,7 +2,13 @@
 
 ; ch07. Friends and Relations
 
-(require "01.rkt")
+(provide a-pair?)
+(provide revpair)
+(provide build)
+
+(require "ch01.rkt")
+(require "ch02.rkt")
+(require "ch03.rkt")
 
 ; is lat a set?
 (define set?
