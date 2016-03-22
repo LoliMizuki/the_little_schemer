@@ -1,3 +1,5 @@
+; 1.Toys
+
 #lang racket
 
 (provide atom?)
@@ -8,3 +10,8 @@
 
 (define atom?
   (lambda (x) (not (list? x))))
+
+
+
+
+
