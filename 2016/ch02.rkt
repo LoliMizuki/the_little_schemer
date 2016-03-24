@@ -18,5 +18,5 @@
   (lambda (a l)
     (cond
       ((null? l) #f)
-      ((eq? a (car l)) #t)
-      (else (member? a (cdr l))))))
+      (else (or (eq? a (car l)) (member? a (cdr l)))))))
+      
