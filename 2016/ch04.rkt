@@ -4,6 +4,8 @@
 
 (require "ch01.rkt")
 
+(provide eqan?)
+
 (define add
   (lambda (n m)
     (cond

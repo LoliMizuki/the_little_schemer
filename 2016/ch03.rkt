@@ -100,4 +100,4 @@
        ((eq? (car lat) old) (cons new (multisubst new old (cdr lat))))
        (else (cons (car lat) (multisubst new old (cdr lat)))))))))
 
-(multisubst 'z 'a '(a f g a t r a b a))
+;(multisubst 'z 'a '(a f g a t r a b a))

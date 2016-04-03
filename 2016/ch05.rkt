@@ -131,3 +131,50 @@
 
 ;(member* 'chips '((potato) (chips ((with) fish) (chips))))
 ;(member* 'kulala '((potato) (chips ((with) fish) (chips))))
+
+(define leftmost*
+   (lambda (l)
+     (cond
+       ((null? l) #f) ; 多檢查一個, for No answer
+       ((atom? (car l)) (car l))
+       (else (leftmost* (car l))))))
+
+;(define eqlist?
+;  (lambda (l1 l2)
+;    (cond
+;      ((and (null? l1) (null? l2)) #t)
+;      ((or (null? l2) (null? l1)) #f)
+;      ((and (atom? (car l1)) (atom? (car l2))) (and (eqan? (car l1) (car l2)) (eqlist? (cdr l1) (cdr l2))))
+;      ((or (atom? (car l1)) (atom? (car l2))) #f)
+;      (else (and (eqlist? (car l1) (car l2)) (eqlist? (cdr l1) (cdr l2)))))))
+
+;(eqlist? '(banan ((split))) '((banana) (split)))
+
+; 比較兩個 S-Expression
+(define equal?
+  (lambda (s1 s2)
+    (cond
+      ((and (atom? s1) (atom? s2)) (eqan? s1 s2))
+      ((or (atom? s1) (atom? s2)) #f)
+      (else (eqlist? s1 s2)))))
+
+; 用 equal? 重寫 eqlist?
+
+(define eqlist?
+  (lambda (l1 l2)
+    (cond
+      ((and (null? l1) (null l2)) #t)
+      ((or (null? l1) (null l2)) #f)
+      (else (and (equal? (car l1) (car l2)) (eqlist? (cdr l1) (cdr l2)))))))
+
+(define rember
+  (lambda (s l)
+    (cond
+      ((null? l) '())
+      ((equal? s (car l)) (cdr l))
+      (else (cons (car l) (rember s (cdr l)))))))
+
+
+
+
+
