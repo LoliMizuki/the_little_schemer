@@ -11,11 +11,43 @@
       ((atom? aexp) (number? aexp))
       (else (and (numbered? (car aexp)) (numbered? (car (cdr (cdr aexp)))))))))
     
-(numbered? '(1 + 2))
-(numbered? '(1 + 2 * (3 ^ 5))) ; 誒誒誒誒?
+;(numbered? '(1 + 2))
+;(numbered? '(1 + 2 * (3 ^ 5))) ; 誒誒誒誒?
 
 
-  ; 受理數字, + X ^
+(define value
+  (lambda (nexp)
+    (cond
+      ((atom? nexp) nexp)
+      ((eq? (car (cdr nexp)) '+) (+ (value (car nexp)) (value (car (cdr (cdr nexp))))))
+      ((eq? (car (cdr nexp)) '*) (* (value (car nexp)) (value (car (cdr (cdr nexp))))))
+      ((eq? (car (cdr nexp)) '^) (^ (value (car nexp)) (value (car (cdr (cdr nexp))))))
+      (else #f))))
 
+;(value '(123 + 345))
+;(value '(111 * 2))
+;(value '(2 ^ 3))
+;(value '((2 ^ 3) + 9))
 
-; value ... 計算結果 ... 
+; value-prefix
+(define value-prefix
+  (lambda (nexp)
+    (cond
+      ((atom? nexp) nexp)
+      ((eq? (car nexp) '+) (+ (value-prefix (car (cdr nexp))) (value-prefix (car (cdr (cdr nexp))))))
+      ((eq? (car nexp) '*) (* (value-prefix (car (cdr nexp))) (value-prefix (car (cdr (cdr nexp))))))
+      ((eq? (car nexp) '^) (^ (value-prefix (car (cdr nexp))) (value-prefix (car (cdr (cdr nexp))))))
+      (else #f))))
+
+;(value-prefix '(^ 8 2))
+;(value-prefix '(+ (* 3 6) (^ 8 2)))
+
+; for prefix
+(define 1st-sub-exp
+  (lambda (axep) (car (cdr axep))))
+
+(define 2nd-sub-exp
+  (lambda (axep) (car (cdr (cdr axep)))))
+
+(define operator
+  (lambda (aexp) (car aexp)))

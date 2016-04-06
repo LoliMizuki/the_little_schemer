@@ -14,3 +14,4 @@
 
 ; ch04
 (provide eqan?)
+(provide ^)
