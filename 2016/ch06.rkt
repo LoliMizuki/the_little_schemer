@@ -30,14 +30,14 @@
 ;(value '((2 ^ 3) + 9))
 
 ; value-prefix
-(define value-prefix
-  (lambda (nexp)
-    (cond
-      ((atom? nexp) nexp)
-      ((eq? (car nexp) '+) (+ (value-prefix (car (cdr nexp))) (value-prefix (car (cdr (cdr nexp))))))
-      ((eq? (car nexp) '*) (* (value-prefix (car (cdr nexp))) (value-prefix (car (cdr (cdr nexp))))))
-      ((eq? (car nexp) '^) (^ (value-prefix (car (cdr nexp))) (value-prefix (car (cdr (cdr nexp))))))
-      (else #f))))
+;(define value-prefix
+;  (lambda (nexp)
+;    (cond
+;      ((atom? nexp) nexp)
+;      ((eq? (car nexp) '+) (+ (value-prefix (car (cdr nexp))) (value-prefix (car (cdr (cdr nexp))))))
+;      ((eq? (car nexp) '*) (* (value-prefix (car (cdr nexp))) (value-prefix (car (cdr (cdr nexp))))))
+;      ((eq? (car nexp) '^) (^ (value-prefix (car (cdr nexp))) (value-prefix (car (cdr (cdr nexp))))))
+;      (else #f))))
 
 ;(value-prefix '(^ 8 2))
 ;(value-prefix '(+ (* 3 6) (^ 8 2)))
@@ -51,3 +51,41 @@
 
 (define operator
   (lambda (aexp) (car aexp)))
+
+; Use help functions
+(define value-prefix
+  (lambda (nexp)
+    (cond
+      ((atom? nexp) nexp)
+      ((eq? (operator nexp) '+) (+ (value-prefix (1st-sub-exp nexp)) (value-prefix (2nd-sub-exp nexp))))
+      ((eq? (operator nexp) '*) (* (value-prefix (1st-sub-exp nexp)) (value-prefix (2nd-sub-exp nexp))))
+      ((eq? (operator nexp) '^) (^ (value-prefix (1st-sub-exp nexp)) (value-prefix (2nd-sub-exp nexp))))
+      (else #f))))
+
+;(value-prefix '(^ 8 2))
+;(value-prefix '(+ (* 3 6) (^ 8 2)))
+
+;Expression
+; (): 0
+; (()): 1
+; (()()): 2
+; (()()()): 3
+
+(define sero?
+  (lambda (n) (null? n)))
+
+(define edd1
+  (lambda (n) (cons '() n)))
+
+(define zub1
+  (lambda (n) (cdr n)))
+
+; +
+(define edd
+  (lambda (n m)
+    (cond
+      ((sero? m) n)
+      (else (edd1 (edd n (zub1 m)))))))
+
+;(edd '(()()()) '(()()))
+
