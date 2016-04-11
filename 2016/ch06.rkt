@@ -2,7 +2,20 @@
 
 #lang racket
 
-(require "Common.rkt")
+(require "ch01.rkt")
+(require "ch04.rkt")
+
+; (provide numbered?)
+; (provide value)
+; (provide value-prefix)
+; (provide 1st-sub-exp)
+; (provide 2nd-sub-exp)
+; (provide operator)
+; (provide value-prefix)
+; (provide sero?)
+; (provide edd1)
+; (provide zub1)
+; (provide edd)
 
 ; 假設 aexp 的 components 必為算術符號或數字
 (define numbered?
@@ -13,7 +26,6 @@
     
 ;(numbered? '(1 + 2))
 ;(numbered? '(1 + 2 * (3 ^ 5))) ; 誒誒誒誒?
-
 
 (define value
   (lambda (nexp)
@@ -88,4 +100,3 @@
       (else (edd1 (edd n (zub1 m)))))))
 
 ;(edd '(()()()) '(()()))
-

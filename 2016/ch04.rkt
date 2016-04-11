@@ -4,8 +4,25 @@
 
 (require "ch01.rkt")
 
-(provide eqan?)
+;(provide add)
+;(provide sub)
+;(provide addtup)
+;(provide multiply)
+;(provide tup+)
+;(provide morethan)
+;(provide lessthan)
+;(provide equal)
 (provide ^)
+;(provide division)
+;(provide length)
+;(provide pick)
+;(provide rempick)
+;(provide no-nums)
+;(provide all-nums)
+(provide eqan?)
+;(provide occur)
+;(provide one?)
+;(provide rempick)
 
 (define add
   (lambda (n m)

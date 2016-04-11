@@ -2,7 +2,16 @@
 
 #lang racket
 
-(provide rember)
+;(provide rember)
+;(provide firsts)
+;(provide insertR)
+;(provide insertL)
+;(provide subst)
+;(provide subst2)
+;(provide multirember)
+;(provide multiinsertR)
+;(provide multiinsertL)
+;(provide multisubst)
 
 (define rember
   (lambda (a lat)

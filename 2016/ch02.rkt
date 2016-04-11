@@ -5,7 +5,7 @@
 (require "ch01.rkt")
 
 (provide lat?)
-(provide member?)
+;(provide member?)
 
 (define lat?
   (lambda (l)

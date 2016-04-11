@@ -2,21 +2,35 @@
 
 #lang racket
 
-(require "Common.rkt")
+(require "ch01.rkt")
+(require "ch04.rkt")
 
-(define rember*
-  (lambda (a l)
-    (cond
-      ((null? l) '())
-      (else
-       (cond
-         ;((and (atom? (car l)) (eq? a (car l))) (rember* a (cdr l)))
-         ((atom? (car l))
-          (cond
-            ((eq? a (car l)) (rember* a (cdr l)))
-            (else (cons (car l) (rember* a (cdr l))))))
-         ; ((list? (car l)) (cons (rember* a (car l)) (rember* a (cdr l)))) 以下的 else 處理了包含 (car l) 是 list 的狀態
-         (else (cons (rember* a (car l)) (rember* a (cdr l))))))))) ; 
+(provide member?)
+(provide rember)
+(provide rember*)
+(provide multirember)
+;(provide insertR)
+;(provide insertL)
+;(provide occur)
+;(provide subst)
+;(provide leftmost)
+;(provide eqlist)
+;(provide equal)
+
+; 後面有重新定義
+;(define rember*
+;  (lambda (a l)
+;    (cond
+;      ((null? l) '())
+;      (else
+;       (cond
+;         ;((and (atom? (car l)) (eq? a (car l))) (rember* a (cdr l)))
+;         ((atom? (car l))
+;          (cond
+;            ((eq? a (car l)) (rember* a (cdr l)))
+;            (else (cons (car l) (rember* a (cdr l))))))
+;         ; ((list? (car l)) (cons (rember* a (car l)) (rember* a (cdr l)))) 以下的 else 處理了包含 (car l) 是 list 的狀態
+;         (else (cons (rember* a (car l)) (rember* a (cdr l)))))))))
 
 
 ;(rember* 'cup '((coffee) cup ((tea) cup) (and (hick)) cup))
@@ -167,6 +181,7 @@
       ((or (null? l1) (null l2)) #f)
       (else (and (equal? (car l1) (car l2)) (eqlist? (cdr l1) (cdr l2)))))))
 
+; 用 equal? 重新定義 rember
 (define rember
   (lambda (s l)
     (cond
@@ -174,7 +189,41 @@
       ((equal? s (car l)) (cdr l))
       (else (cons (car l) (rember s (cdr l)))))))
 
+; 用 equal? 重新定義 rember*
 
+; 重新定義 ch02 的 member?, eqaul? 取代 eq?
+(define member?
+  (lambda (a l)
+    (cond
+      ((null? l) #f)
+      (else (or (equal? a (car l)) (member? a (cdr l)))))))
 
+;(member? 'a '(a b c 1 2 3))
+;(member? 2 '(a b c 1 2 3))
+;(member? 'z '(a b c 1 2 3))
 
+(define rember*
+  (lambda (a l)
+    (cond
+      ((null? l) '())
+      (else
+       (cond
+         ((atom? (car l))
+          (cond
+            ((equal? a (car l)) (rember* a (cdr l)))
+            (else (cons (car l) (rember* a (cdr l))))))
+         (else (cons (rember* a (car l)) (rember* a (cdr l)))))))))
 
+;(rember* 'cup '((coffee) cup ((tea) cup) (and (hick)) cup))
+;(rember* 'sauce '(((tomato sauce)) ((bean) sauce) (and ((flying)) sauce)))
+;(rember* 1 '(1 1 1 1 2 3 4))
+
+; 用 eqaul? 重新定義 multirember
+(define multirember
+  (lambda (a lat)
+    (cond
+      ((null? lat) '())
+      (else
+       (cond
+         ((equal? (car lat) a) (multirember a (cdr lat)))
+         (else (cons (car lat) (multirember a (cdr lat)))))))))
