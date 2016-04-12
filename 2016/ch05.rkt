@@ -14,8 +14,8 @@
 ;(provide occur)
 ;(provide subst)
 ;(provide leftmost)
-;(provide eqlist)
-;(provide equal)
+;(provide eqlist?)
+;(provide equal?)
 
 ; 後面有重新定義
 ;(define rember*

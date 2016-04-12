@@ -58,8 +58,8 @@
 ;(provide occur)
 ;(provide subst)
 ;(provide leftmost)
-;(provide eqlist)
-;(provide equal)
+;(provide eqlist?)
+;(provide equal?)
 
 ; ch06
 ; (provide numbered?)
