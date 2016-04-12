@@ -2,6 +2,8 @@
 
 #lang Racket
 
+(require "ch01.rkt")
+(require "ch04.rkt")
 (require "ch05.rkt")
 
 ;(define rember-f
@@ -15,7 +17,7 @@
 ;(rember-f eq? 'jelly '(jelly beans are good))
 ;(rember-f equal? '(pop corn) '(jelly beans are (pop corn) good))
 
-; c: Currying
+; c: Currying です
 (define eq?-c
   (lambda (a) (lambda (x) (eq? a x))))
 
@@ -81,3 +83,51 @@
     ((insert-g seqrem) #f a l))) ; #f 為原本 (insert-g new old l) 中的 new
 
 ;(rember 'sausage '(pizza with sausage and bacon))
+
+(define atom-to-function
+  (lambda (x)
+    (cond
+      ((eq? x '+) +)
+      ((eq? x '*) *)
+      (else ^))))
+
+(define operator (lambda (exp) (car exp)))
+(define 1st-sub-exp (lambda (exp) (car (cdr exp))))
+(define 2nd-sub-exp (lambda (exp) (car (cdr (cdr exp)))))
+
+(define value
+  (lambda (nexp)
+    (cond
+      ((atom? nexp) nexp)
+      (else
+       ((atom-to-function (operator nexp))
+        (value (1st-sub-exp nexp))
+        (value (2nd-sub-exp nexp)))))))
+
+;(value '(+ 123 333))
+
+(define multirember-f
+  (lambda (test?)
+    (lambda (a lat)
+      (cond
+        ((null? lat) '())
+        ((test? a (car lat)) ((multirember-f test?) a (cdr lat)))
+        (else (cons (car lat) ((multirember-f test?) a (cdr lat))))))))
+
+;((multirember-f eq?) 'tuna '(shrimp salad tuna salad and tuna))
+
+(define multirember-eq? (multirember-f eq?))
+
+(define eq?-tuna (eq?-c 'tuna))
+;(eq?-tuna 'tuna)
+;(eq?-tuna 'nottuna)
+
+(define multirember-T
+  (lambda (test?)
+    (lambda (lat)
+      (cond
+        ((null? lat) '())
+        ((test? (car lat)) ((multirember-T test?) (cdr lat)))
+        (else (cons (car lat) ((multirember-T test?) (cdr lat))))))))
+
+;((multirember-T eq?-tuna) '(shrimp salad tuna salad and tuna))
