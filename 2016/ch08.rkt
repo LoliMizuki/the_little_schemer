@@ -81,3 +81,54 @@
     ((insert-g seqrem) #f a l))) ; #f 為原本 (insert-g new old l) 中的 new
 
 ;(rember 'sausage '(pizza with sausage and bacon))
+
+; col 表示 collector function
+; 用以表示 continuation(延續性, https://zh.wikipedia.org/wiki/%E5%BB%B6%E7%BA%8C%E6%80%A7)
+; 把執行狀態傳遞下去
+; 先不要由原 func name 去思考意義
+
+(define multirember&co
+  (lambda (a lat col)
+    (cond
+      ((null? lat)
+       (col '() '()))
+      ((eq? (car lat) a)
+       (multirember&co a (cdr lat) (lambda (newlat seen) (col newlat (cons (car lat) seen)))))
+      (else
+       (multirember&co a (cdr lat) (lambda (newlat seen) (col (cons (car lat) newlat) seen)))))))
+
+(define a-friend
+  (lambda (x y) (null? y)))
+  
+;(multirember&col 'tuna '() a-friend)
+; [Analysis]
+;   (null? lat) => (a-friend '() '()) => #t
+
+;(multirember&co 'tuna '(tuna) a-friend)
+; *Action 分析*
+; 每次碰上 (eq? a (car lat)) 時 => 生成一個新的函數作為新的 col 參數
+; 新 col => (cons (car lat) 參數2) => 將 參數2 與 (car lat) (即 a), cons 起來
+; lat 走訪完畢後 => (col '() '()) 判斷 => 完成搜尋到的 a list
+; a-friend 定義: (null? list)
+; (感覺上還是看不懂 XD)
+
+;(multirember&col 'tuna '(and tuna) a-friend) ; => 最後結果 '(tuna), 所以 #t
+;(multirember&col 'tuna '(and notuna) a-friend) ; => 最後結果 '(), 所以 #f
+
+(define multiinsertLR
+  (lambda (new oldL oldR lat)
+    (cond
+      ((null? lat) '())
+      ((eq? (car lat) oldL) (cons new (cons (car lat) (multiinsertLR new oldL oldR (cdr lat)))))
+      ((eq? (car lat) oldR) (cons (car lat) (cons new (multiinsertLR new oldL oldR (cdr lat)))))
+      (else (cons (car lat) (multiinsertLR new oldL oldR (cdr lat)))))))
+
+;(multiinsertLR 'new '<- '-> '(A G <- H U Y -> R D D <-))
+
+; TODO:
+;(define multiinsertLR&co
+;  (lambda (new oldL oldR lat col)
+;    ()))
+
+
+; col 定義, 若碰到 oldL => L += 1, oldR => R += 1

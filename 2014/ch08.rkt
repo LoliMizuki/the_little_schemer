@@ -146,7 +146,7 @@
 ; 追蹤測試: 若 a: tuna, lat: ('tuna), col: a-friend
 ; -- 1st 輪 --
 ; (eq? (car lat) a) is TRUE => 執行: (multirember&col a (cdr lat) new-friend
-; new-friend 的定義鐘包含了目前需要記錄的值
+; new-friend 的定義中包含了目前需要記錄的值
 ; 即 (define new-friend (lambda (newlat seem)
 ;                               (col newlat (cons 'tuna seem)))) # 其中 col 為 a-friend
 ; 
