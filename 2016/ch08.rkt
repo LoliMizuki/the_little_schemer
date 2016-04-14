@@ -232,16 +232,15 @@
                                          (lambda (newl p s) (col (cons (car l) newl) (* (car l) p) s))))
          (else (evens-only*&co (cdr l) (lambda (newlat p s) (col newlat p (+ (car l) s)))))))
       (else (evens-only*&co (car l) (lambda (al ap as)
-                                     (evens-only*&co (cdr l) (lambda (dl dp ds) 
-                                                              (col (cons al dl)
-                                                                   (* ap dp)
-                                                                   (+ as ds))))))))))
+                                      (evens-only*&co (cdr l) (lambda (dl dp ds) (col (cons al dl)
+                                                                                      (* ap dp)
+                                                                                      (+ as ds))))))))))
 
 (define the-last-friend
   (lambda (newl product sum)
     (cons sum (cons product newl))))
 
-(evens-only*&co '((9 1 2 8) 3 10 ((9 9) 7 6) 2) the-last-friend)
+;(evens-only*&co '((9 1 2 8) 3 10 ((9 9) 7 6) 2) the-last-friend)
 
 ; Miz 的嘗試: 將判斷和執行分離
 ; 函數只將 odd/even 分離
