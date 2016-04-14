@@ -176,10 +176,100 @@
 
 ;(multiinsertLR 'new '<- '-> '(A G <- H U Y -> R D D <-))
 
-; TODO:
-;(define multiinsertLR&co
-;  (lambda (new oldL oldR lat col)
-;    ()))
-
+(define multiinsertLR&co
+  (lambda (new oldL oldR lat col)
+    (cond
+      ((null? lat) (col '() 0 0))
+      ((eq? (car lat) oldL) (multiinsertLR&co new oldL oldR (cdr lat)
+                                              ; Here comes new collector
+                                              (lambda (newlat L R)
+                                                (col
+                                                 (cons new (cons (car lat) newlat)) (add1 L) R))))
+      ((eq? (car lat) oldR) (multiinsertLR&co new oldL oldR (cdr lat)
+                                              ; Here comes new collector
+                                              (lambda (newlat L R)
+                                                (col
+                                                 (cons (car lat) (cons new newlat)) L (add1 R)))))
+      (else (multiinsertLR&co new oldL oldR (cdr lat)
+                              (lambda (newlat L R)
+                                (col
+                                 (cons (car lat) newlat) L R)))))))
 
 ; col 定義, 若碰到 oldL => L += 1, oldR => R += 1
+(define look-lat (lambda (lat countL countR) lat))
+(define look-countL (lambda (lat countL countR) countL))
+(define look-countR (lambda (lat countL countR) countR))
+
+(define test-lat '(A G <- H U Y -> R D D <-))
+
+;(multiinsertLR&co 'new '<- '-> test-lat look-lat)
+;(multiinsertLR&co 'new '<- '-> test-lat look-countL)
+;(multiinsertLR&co 'new '<- '-> test-lat look-countR)
+
+;(define even? (lambda (n) (= (* (/ n 2) 2) n))) racket of (/ n 2) is not int
+(define even? (lambda (n) (= (modulo n 2) 0)))
+
+(define even-only*
+  (lambda (l)
+    (cond
+      ((null? l) '())
+      ((atom? (car l))
+       (cond
+         ((even? (car l)) (cons (car l) (even-only* (cdr l))))
+         (else (even-only* (cdr l)))))
+      (else (cons (even-only* (car l)) (even-only* (cdr l)))))))
+
+;(even-only* '(1 2 3 4 5 6 7 8 9 0))
+;(even-only* '((9 1 2 8) 3 10 ((9 9) 7 6) 2))
+
+(define evens-only*&co
+  (lambda (l col)
+    (cond
+      ((null? l) (col '() 1 0))
+      ((atom? (car l))
+       (cond
+         ((even? (car l)) (evens-only*&co (cdr l)
+                                         (lambda (newl p s) (col (cons (car l) newl) (* (car l) p) s))))
+         (else (evens-only*&co (cdr l) (lambda (newlat p s) (col newlat p (+ (car l) s)))))))
+      (else (evens-only*&co (car l) (lambda (al ap as)
+                                     (evens-only*&co (cdr l) (lambda (dl dp ds) 
+                                                              (col (cons al dl)
+                                                                   (* ap dp)
+                                                                   (+ as ds))))))))))
+
+(define the-last-friend
+  (lambda (newl product sum)
+    (cons sum (cons product newl))))
+
+(evens-only*&co '((9 1 2 8) 3 10 ((9 9) 7 6) 2) the-last-friend)
+
+; Miz 的嘗試: 將判斷和執行分離
+; 函數只將 odd/even 分離
+; 實際動作由傳入的 collector 定義
+; 目前只能處理純粹的 atom-list ><"
+(define even-odd-action&co
+  (lambda (l col)
+    (cond
+      ((null? l) (col '() '()))
+      ((atom? (car l))
+       (cond
+         ((even? (car l)) (even-odd-action&co (cdr l) (lambda (odd-l even-l) (col odd-l (cons (car l) even-l)))))
+         (else (even-odd-action&co (cdr l) (lambda (odd-l even-l) (col (cons (car l) odd-l) even-l))))))
+      (else #f)))) ; I can not handle ... >"<
+             
+
+; 定義動作
+(define sum-of-even
+  (lambda (odd-l even-l)
+    (cond
+      ((null? even-l) 0)
+      (else (+ (car even-l) (sum-of-even odd-l (cdr even-l)))))))
+
+(define sum-of-odd
+  (lambda (odd-l even-l)
+    (cond
+      ((null? odd-l) 0)
+      (else (+ (car odd-l) (sum-of-odd (cdr odd-l) even-l))))))
+
+;(even-odd-action&co '(1 2 3 4 5 6 7) sum-of-even)
+;(even-odd-action&co '((9 1 2 8) 3 10 ((9 9) 7 6) 2) sum-of-odd) => 不工作
