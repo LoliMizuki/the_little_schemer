@@ -5,6 +5,8 @@
 (require "ch01.rkt")
 (require "ch05.rkt")
 
+(provide a-pair?)
+
 (define set?
   (lambda (lat)
     (cond
