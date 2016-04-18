@@ -48,13 +48,16 @@
     (cond
       ((atom? pora) pora)
       ((a-pair? (first pora)) (align (shift pora)))
-      (else (build (fisrt pora) (align (second pora)))))))
+      (else (build (first pora) (align (second pora)))))))
 
-; 計算 align 的輸出
+; 計算 align 的輸出用
+; atom 數?
 (define length*
   (lambda (pora)
     (cond
       ((atom? pora) 1)
       (else (+ (length* (first pora)) (length* (second pora)))))))
+
+(length* (align '((a b) c)))
 
 
