@@ -58,6 +58,18 @@
       ((atom? pora) 1)
       (else (+ (length* (first pora)) (length* (second pora)))))))
 
-(length* (align '((a b) c)))
+;(length* (align '((a b) c)))
+
+; Ackermann function
+(define A
+  (lambda (n m)
+    (cond
+      ((zero? n) (add1 m))
+      ((zero? m) (A (sub1 n) 1))
+      (else (A (sub1 n) (A n (sub1 m))))))) 
+
+;(A 1 0)
+;(A 1 1)
+;(A 2 2)
 
 
