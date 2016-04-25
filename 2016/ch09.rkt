@@ -102,3 +102,49 @@
 ;(A 1 0)
 ;(A 1 1)
 ;(A 2 2)
+
+; 使用 lambda 匿名的情形下定義`遞迴`
+
+((lambda (mk-length)
+   (mk-length mk-length))
+ (lambda (mk-length)
+   (lambda (l)
+     (cond
+       ((null? l) 0)
+       (else (add1 ((mk-length mk-length) (cdr l))))))))
+
+; 驗證
+;(((lambda (mk-length)
+;   (mk-length mk-length))
+; (lambda (mk-length)
+;   (lambda (l)
+;     (cond
+;       ((null? l) 0)
+;       (else (add1 ((mk-length mk-length) (cdr l)))))))) '(apple))
+
+;(((lambda (mk-length)
+;   (mk-length mk-length))
+; (lambda (mk-length)
+;   (lambda (l)
+;     (cond
+;       ((null? l) 0)
+;       (else (add1 ((mk-length mk-length) (cdr l)))))))) '(apple banner))
+
+
+; 小測試
+((lambda (mkc) (mkc mkc))
+ (lambda (mkc)
+   (lambda (x y)
+     (cons x (cons y '())))))
+
+;(((lambda (mkc) (mkc mkc))
+; (lambda (mkc)
+;   (lambda (x y)
+;     (cons x (cons y '()))))) 'a 'b)
+
+; Y-Conbination
+(define Y
+  (lambda (le)
+    (lambda (f) (f f))
+    (lambda (f)
+      (le (lambda (x) ((f f) x))))))
