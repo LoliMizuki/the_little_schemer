@@ -6,6 +6,7 @@
 (require "ch05.rkt")
 
 (provide a-pair?)
+(provide revpair)
 
 (define set?
   (lambda (lat)

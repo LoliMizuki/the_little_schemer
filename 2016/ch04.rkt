@@ -21,7 +21,7 @@
 ;(provide all-nums)
 (provide eqan?)
 ;(provide occur)
-;(provide one?)
+(provide one?)
 ;(provide rempick)
 
 (define add

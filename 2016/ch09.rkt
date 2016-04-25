@@ -3,6 +3,7 @@
 #lang racket
 
 (require "ch01.rkt")
+(require "ch04.rkt")
 (require "ch07.rkt")
 
 (define pick
@@ -60,6 +61,36 @@
 
 ;(length* (align '((a b) c)))
 
+(define weight*
+  (lambda (pora)
+    (cond
+      ((atom? pora) 1)
+      (else (+ (* (weight* (first pora)) 2) (weight* (second pora)))))))
+
+;(weight* '((a b) c))
+;(weight* '(a (b c)))
+
+(define shuffle
+  (lambda (pora)
+    (cond
+      ((atom? pora) pora)
+      ((a-pair? (first pora)) (shuffle (revpair pora)))
+      (else (build (first pora) (shuffle (second pora)))))))
+
+;(shuffle '((a b) c))
+;(shuffle '(a b))
+;(shuffle '((a b) (c d)))
+
+; Collatz conjecture (https://zh.wikipedia.org/wiki/%E8%80%83%E6%8B%89%E5%85%B9%E7%8C%9C%E6%83%B3)
+; 對所有自然數, 如果它是奇數, 則對它乘3再加1, 如果它是偶數, 則對它除以2, 如此循環, 最終都能夠得到1.
+; by Lothar Collatz (https://en.wikipedia.org/wiki/Lothar_Collatz)
+(define C
+  (lambda (n)
+    (cond
+      ((one? n) 1)
+      ((even? n) (C (/ n 2)))
+      (else (C (+ (* n 3) 1))))))
+
 ; Ackermann function
 (define A
   (lambda (n m)
@@ -71,5 +102,3 @@
 ;(A 1 0)
 ;(A 1 1)
 ;(A 2 2)
-
-
