@@ -6,6 +6,8 @@
 (require "ch04.rkt")
 (require "ch07.rkt")
 
+(provide build)
+
 (define pick
   (lambda (n lat)
     (cond
@@ -105,13 +107,13 @@
 
 ; 使用 lambda 匿名的情形下定義`遞迴`
 
-((lambda (mk-length)
-   (mk-length mk-length))
- (lambda (mk-length)
-   (lambda (l)
-     (cond
-       ((null? l) 0)
-       (else (add1 ((mk-length mk-length) (cdr l))))))))
+;((lambda (mk-length)
+;   (mk-length mk-length))
+; (lambda (mk-length)
+;   (lambda (l)
+;     (cond
+;       ((null? l) 0)
+;       (else (add1 ((mk-length mk-length) (cdr l))))))))
 
 ; 驗證
 ;(((lambda (mk-length)
@@ -132,10 +134,10 @@
 
 
 ; 小測試
-((lambda (mkc) (mkc mkc))
- (lambda (mkc)
-   (lambda (x y)
-     (cons x (cons y '())))))
+;((lambda (mkc) (mkc mkc))
+; (lambda (mkc)
+;   (lambda (x y)
+;     (cons x (cons y '())))))
 
 ;(((lambda (mkc) (mkc mkc))
 ; (lambda (mkc)
