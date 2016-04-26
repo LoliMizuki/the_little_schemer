@@ -7,6 +7,8 @@
 (require "ch07.rkt")
 
 (provide build)
+(provide first)
+(provide second)
 
 (define pick
   (lambda (n lat)
