@@ -12,6 +12,7 @@
 
 (define new-entry build)
 
+; -f: 用來處理當無法得到結果時的 function, Miz 先叫他 fail function 吧 :D
 (define lookup-in-entry-help
   (lambda (name names values entry-f)
     (cond
@@ -30,14 +31,19 @@
 
 ; table 的定義:
 ; a list of entries
+
+; extend-table: 用以建構 entry 和 table
+; 參數: new-entry table
 (define extend-table cons)
 
 (define lookup-in-table
   (lambda (name table table-f)
     (cond
       ((null? table) (table-f name))
-      (else (lookup-in-entry name (car table) (lambda (name)
-                                                (lookup-in-table name (cdr table) table-f)))))))
+      (else (lookup-in-entry name (car table)
+                             ; 將繼續搜尋作為 lookup-in-entry 的 fail function
+                             ; 處理搜尋目前的 entry 搜尋失敗
+                             (lambda (name) (lookup-in-table name (cdr table) table-f)))))))
 
 ;(lookup-in-table 'entree
 ;                 '(((entree dessert) (spaghetti spumoni))
