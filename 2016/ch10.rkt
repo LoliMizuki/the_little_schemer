@@ -57,6 +57,8 @@
 ; *lambda: (lambda (a b) (+ a b))
 ; *application: ((lambda (a b) (+ a b)) 11 99)
 ; *cond: (cond (nothing 'someyhing) (else #f))
+; --
+; primitive car/cons/cdr: car, cons, cdr
 
 ; Support
 (define text-of second)
@@ -81,12 +83,13 @@
 
 (define *lambda
   (lambda (e table)
-    (build 'non-'primitive (cons table (cdr e)))))
+    (build 'non-primitive (cons table (cdr e)))))
 
-(define *application (lambda (e table) ('application)))
+(define *application (lambda (e table) 'application))
 
 (define *cond '*cond)
 
+; atom to action
 (define atom-to-action
   (lambda (e)
     (cond
@@ -101,35 +104,40 @@
       ((eq? e 'atom?) *const)
       ((eq? e 'add1) *const)
       ((eq? e 'sub1) *const)
-      ((eq? e 'number) *const)
+      ((eq? e 'number?) *const)
       (else *identifier))))
 
+; list to action
+; (aaa x y z) 
+; => 若 aaa 是 atom => 判斷是 quote? lambda? cond?
+; => 若非 atom => application
 (define list-to-action
   (lambda (e)
     (cond
       ((atom? (car e))
        (cond
-         ((eq? e 'quote) *quote)
-         ((eq? e 'lambda) *lambda)
-         ((eq? e 'cond) *cond)
+         ((eq? (car e) 'quote) *quote)
+         ((eq? (car e) 'lambda) *lambda)
+         ((eq? (car e) 'cond) *cond)
          (else *application)))
        (else *application))))
 
+; 表達式的動作
 (define expression-to-action
   (lambda (e)
     (cond
       ((atom? e) (atom-to-action e))
       (else (list-to-action e)))))
 
+; 
 (define meaning
   (lambda (e table)
-    ((expression-to-action e) table)))
+    ((expression-to-action e) e table)))
 
+; 求 e 值
 (define value
   (lambda (e)
     (meaning e '())))
 
-
-;(meaning '(lambda (x y) (cons x y)) '(((y z) ((8) 9))))
+(meaning '(lambda (x y) (cons x y)) '(((y z) ((8) 9))))
 ; lambda 沒做出答案, 請檢查前面定義是否有誤
-
