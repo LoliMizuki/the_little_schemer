@@ -11,7 +11,7 @@
 (provide *identifier)
 (provide *lambda)
 (provide *application)
-(provide *cond)
+;(provide *cond) ; cond 太特殊了, 會在 ch10 本文重新定義的說
 
 (provide atom-to-action)
 (provide list-to-action)
@@ -47,6 +47,16 @@
 (define *lambda
   (lambda (e table)
     (build 'non-primitive (cons table (cdr e)))))
+; lambda 動作解:
+; 求 (meaning e table)
+; => e is (lambda (x) (cons x y))
+; => table is (((y z) ((8) 9)))
+;
+; Ans:
+; (((y z) ((8) 9)))   (x)     (cons x y)
+; ~~~~~~~~~~~~~~~~~   ~~~     ~~~~~~~~~~
+; table               fomals  body
+; 所以追加 support functions: table-of, formals-of, body-of
 
 (define *application (lambda (e table) 'application))
 

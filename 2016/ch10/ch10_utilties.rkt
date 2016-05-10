@@ -61,3 +61,7 @@
 ; Support
 (define text-of second)
 (define initial-table (lambda (name) (car '())))
+
+(define table-of first)
+(define formals-of second)
+(define bidy-of third)
