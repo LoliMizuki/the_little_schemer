@@ -65,7 +65,7 @@
 
 ; == *cond ==
 
-; Specail for cond
+; Specail for *cond
 ; - 需要用上 meaning
 ; ...
 
@@ -77,6 +77,7 @@
 ;  - ex: [((zero? x) (+ x x))
 ;         (... 二號)
 ;         (... 最可愛的三號)]
+; - ev?
 (define evcon
   (lambda (lines table)
     (cond
