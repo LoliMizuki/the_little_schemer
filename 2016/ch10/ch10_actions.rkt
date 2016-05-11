@@ -11,11 +11,7 @@
 (provide *identifier)
 (provide *lambda)
 (provide *application)
-;(provide *cond) ; cond 太特殊了, 會在 ch10 本文重新定義的說
-
-(provide atom-to-action)
-(provide list-to-action)
-(provide expression-to-action)
+;(provide *cond) ; *cond 定義 => ch10 本文 (因為需要使用到 meaning)
 
 ; 幾種 type
 ; *const: 123, #t, #f
@@ -23,11 +19,14 @@
 ; *identifier: Mizuki
 ; *lambda: (lambda (a b) (+ a b))
 ; *application: ((lambda (a b) (+ a b)) 11 99)
-; *cond: (cond (nothing 'someyhing) (else #f))
+; *cond: (cond (nothing 'something) (else #f))
 ; --
 ; primitive car/cons/cdr: car, cons, cdr
 
+; action 的 common form: (e table)
+
 ; Type actions
+
 (define *const
   (lambda (e table)
     (cond
@@ -60,44 +59,4 @@
 
 (define *application (lambda (e table) 'application))
 
-(define *cond '*cond)
-
-; atom to action
-(define atom-to-action
-  (lambda (e)
-    (cond
-      ((number? e) *const)
-      ((eq? e #t) *const)
-      ((eq? e #f) *const)
-      ((eq? e 'cons) *const)
-      ((eq? e 'car) *const)
-      ((eq? e 'cdr) *const)
-      ((eq? e 'null?) *const)
-      ((eq? e 'eq?) *const)
-      ((eq? e 'atom?) *const)
-      ((eq? e 'add1) *const)
-      ((eq? e 'sub1) *const)
-      ((eq? e 'number?) *const)
-      (else *identifier))))
-
-; list to action
-; (aaa x y z) 
-; => 若 aaa 是 atom => 判斷是 quote? lambda? cond?
-; => 若非 atom => application
-(define list-to-action
-  (lambda (e)
-    (cond
-      ((atom? (car e))
-       (cond
-         ((eq? (car e) 'quote) *quote)
-         ((eq? (car e) 'lambda) *lambda)
-         ((eq? (car e) 'cond) *cond)
-         (else *application)))
-       (else *application))))
-
-; 表達式的動作
-(define expression-to-action
-  (lambda (e)
-    (cond
-      ((atom? e) (atom-to-action e))
-      (else (list-to-action e)))))
+; *cond 在 ch10 本文中
