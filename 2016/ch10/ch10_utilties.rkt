@@ -64,4 +64,4 @@
 
 (define table-of first)
 (define formals-of second)
-(define bidy-of third)
+(define body-of third)

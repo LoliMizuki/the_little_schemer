@@ -10,8 +10,8 @@
 (provide *quote)
 (provide *identifier)
 (provide *lambda)
-(provide *application)
-;(provide *cond) ; *cond 定義 => ch10 本文 (因為需要使用到 meaning)
+; (provide *application) ; *application 在 ch10 本文中
+;(provide *cond) ; *cond 定義 => ch10 本文
 
 ; 幾種 type
 ; *const: 123, #t, #f
@@ -55,8 +55,10 @@
 ; (((y z) ((8) 9)))   (x)     (cons x y)
 ; ~~~~~~~~~~~~~~~~~   ~~~     ~~~~~~~~~~
 ; table               fomals  body
-; 所以追加 support functions: table-of, formals-of, body-of
+;
+; support functions: table-of, formals-of, body-of (在 ch10_utilities.rkt)
 
-(define *application (lambda (e table) 'application))
+; (define *application (lambda (e table) 'application))
 
 ; *cond 在 ch10 本文中
+; *application 在 ch10 本文中

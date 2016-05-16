@@ -96,6 +96,63 @@
 (define answer-of second)
 
 ; test *cond
-(define e '(cond (coffee klatsch) (else party)))
-(define table '(((coffee) (#t)) ((klatsch party) (5 (6)))))
-(*cond e table)
+;(define e '(cond (coffee klatsch) (else party)))
+;(define table '(((coffee) (#t)) ((klatsch party) (5 (6)))))
+;(*cond e table)
+
+; 
+(define evlis
+  (lambda (args table)
+    (cond
+      ((null? args) '())
+      (else
+       (cons (meaning (car args) table) (evlis (cdr args) table))))))
+
+(define *application
+  (lambda (e table)
+    (apply-re
+     (meaning (function-of e) table)
+     (evlis (arguments-of e) table))))
+
+(define function-of car)
+(define arguments-of cdr)
+
+; Types of functions: "Pritimitives" and "Non-pritimitives"
+
+(define pritimitive? (lambda (l) (eq? (first l) 'privtimitive)))
+(define non-pritimitive? (lambda (l) (eq? (first l) 'non-privtimitive)))
+
+; apply 已有內建
+(define apply-re
+  (lambda (func vals)
+    (cond
+      ((pritimitive? func) (apply-pritimitive (second func) vals))
+      ((non-pritimitive? func) (apply-clouse (second func) vals)))))
+
+; vals 的形式?
+(define apply-pritimitive
+  (lambda (name vals)
+    (cond
+      ((eq? name 'cons) (cons (fisrt vals) (second vals)))
+      ((eq? name 'car) (car (fisrt vals)))
+      ((eq? name 'cdr) (cdr (fisrt vals)))
+      ((eq? name 'null?) (null? (first vals)))
+      ((eq? name 'eq?) (eq? (fisrt vals) (second vals)))
+      ((eq? name 'atom?) (:atom? (fisrt vals)))
+      ((eq? name 'zero?) (zero? (fisrt vals)))
+      ((eq? name 'add1) (add1 (fisrt vals)))
+      ((eq? name 'sub1) (sub1 (fisrt vals)))
+      ((eq? name 'number?) (number? (fisrt vals))))))
+
+(define :atom?
+  (lambda (x)
+    (cond
+      ((atom? x) #t)
+      ((null? x) #f)
+      ((eq? (car x) 'pritimitive) #t) ;?
+      ((eq? (car x) 'non-pritimitive) #t) ;?
+      (else #f))))
+
+;(define apply-closure
+;  (lambda (closure vals)
+;    ())
